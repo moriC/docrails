@@ -1,6 +1,11 @@
+# -*- coding: utf-8 -*-
+
 
 大事なこと
 ==========
+
+* 作業は必ず ja-JP ブランチで行ってください。
+  master ブランチは本家へのマージ作業でのみ使用します。
 
 * 翻訳は必ず *.textile.trans ファイルで行ってください。
   翻訳を直接 *.textile ファイルに書き込むのは禁止です。
@@ -8,14 +13,13 @@
 
 * 翻訳リポジトリに *.textile ファイルをコミットしないでください。
   みなさんがコミットするのは *.textile.trans だけです。
-  翻訳された *.textile は管理人が本家リポジトリにコミットし、それをこの翻訳リポジトリにマージします。
+  翻訳された *.textile は管理人が本家リポジトリにマージし、それが ja-JP ブランチにマージされます。
   誤って *.textile をコミットするのを防ぐために、頻繁に rake clean を実行しましょう。
 
 * 翻訳時の文字コードは UTF-8 です。
-  lv -Iu file.textile を実行し、UTF-8 になっていることを確認してください。
+  nkf -g file.textfile や lv -Iu file.textile を実行し、UTF-8 になっていることを確認してください。
 
-* コミットログは日本語でも構いません。ただし文字コードは UTF-8 限定です。
-
+* コミットログは英語でお願いします。これは本家リポジトリへのマージを考慮してのことです。
 
 
 分担表
@@ -74,48 +78,51 @@
 	http://github.com/kwatch/docrails のこと。
 	希望者にはもれなくコミット権限を進呈中。
 
+: $SRC
+	ディレクトリ「docrails/railties/guides/source」のこと。
+
 : *.textile
 	拡張子が .textile のファイル。
-	book-content/en/*.textile が英語の元原稿。
-	book-content/jp/*.textile が翻訳された原稿。
+	$SRC/*.textile が英語の元原稿。
+	$SRC/ja-JP/*.textile が翻訳された原稿。
 
 : *.textile.trans
 	英語原稿と日本語翻訳とが混在した、拡張子が .textile.trans であるファイル。
-	英語部分には ".EN\t" が、日本語部分には ".JP\t" が接頭辞としてついている。
-	book-content/en/*.textile から *.textile.trans が作成され、それに日本語翻訳をつけて、そこから翻訳部分だけを自動的に抜き出して book-content/jp/*.textile が作られる。
+	英語部分には ".EN\t" が、日本語部分には ".JA\t" が接頭辞としてついている。
+	$SRC/*.textile から $SRC/ja-JP/*.textile.trans が作成され、それに日本語翻訳をつけて、そこから翻訳部分だけを自動的に抜き出して $SRC/ja-JP/*.textile が作られる。
 
 : *.trans
 	今のところ *.textile.trans ファイルと同義。
 
 
 
-作業方針
+作業概要
 ========
 
-以下の説明では、ディレクトリ「docrails/railties/guides/source」を表すのに「$SRC」という短縮表示を使う。
+詳しい作業手順は後述。ここでは概要のみ説明する。
 
 
 新しく翻訳するとき
 ------------------
 
-1. $SRC/XXX.textile から $SRC/ja-JP/XXX.textile.trans のスケルトンを自動生成
-2. $SRC/ja-JP/XXX.textile.trans に日本語翻訳を手動で追加
-3. $SRC/ja-JP/XXX.textile.trans から日本語部分だけを抜き出して $SRC/ja-JP/XXX.textile を自動生成
+1. (自動) $SRC/XXX.textile から $SRC/ja-JP/XXX.textile.trans のスケルトンを自動生成
+2. (手動) $SRC/ja-JP/XXX.textile.trans に日本語翻訳を手動で追加
+3. (自動) $SRC/ja-JP/XXX.textile.trans から日本語部分だけを抜き出して $SRC/ja-JP/XXX.textile を自動生成
 
 
 英語部分が更新されたとき
 ------------------------
 
-1. rake diff F=XXX.textile.trans を実行し、英語部分の更新内容を確認
-2. $SRC/ja-JP/XXX.textile.trans の英語と日本語を手動で更新
-3. $SRC/ja-JP/XXX.textile.trans から日本語部分だけを抜き出して $SRC/ja-JP/XXX.textile を自動生成
+1. (自動) rake diff F=XXX.textile.trans を実行し、英語部分の更新内容を確認
+2. (手動) $SRC/ja-JP/XXX.textile.trans の英語と日本語を手動で更新
+3. (自動) $SRC/ja-JP/XXX.textile.trans から日本語部分だけを抜き出して $SRC/ja-JP/XXX.textile を自動生成
 
 
 日本語翻訳だけを更新するとき
 ----------------------------
 
-1. $SRC/ja-JP/XXX.textile.trans を手動で更新
-2. $SRC/ja-JP/XXX.textile.trans から日本語部分だけを抜き出して $SRC/ja-JP/XXX.textile を自動生成
+1. (手動) $SRC/ja-JP/XXX.textile.trans を手動で更新
+2. (自動) $SRC/ja-JP/XXX.textile.trans から日本語部分だけを抜き出して $SRC/ja-JP/XXX.textile を自動生成
 
 
 
@@ -130,6 +137,9 @@
 	### (コミット権限がない人は管理者まで連絡を!)
 	$ git clone git@github.com:kwatch/docrails.git
 	$ git cd docrails
+	### ユーザ名とメールアドレスを設定 (必要なら)
+	$ git config user.name "your name"
+	$ git config user.email your@email-addr.com
 
 
 新しく翻訳するとき
@@ -137,9 +147,9 @@
 
 	### 翻訳リポジトリを更新
 	$ cd docrails/
-	$ git stash         # 変更ファイルがあるとき
-	$ git pull --rebase
-	$ git stash pop     # git stash したとき
+	$ git stash                       # 変更ファイルがあるとき
+	$ git pull --rebase               # (TODO: --rebase は必要?)
+	$ git stash pop                   # git stash したとき
 
 	### *.trans ファイルを作成
 	$ cd railties/guides/source/ja-JP/
@@ -149,48 +159,12 @@
 	[create] XXX.textile.trans
 
 	### *.trans ファイルを翻訳
-	$ vi README                      # 分担表に名前を記入
+	$ vi README                       # 分担表に名前を記入
 	$ git add README XXX.textile.trans
-	$ git commit -m "Start translation of 'XXX.textile'."
+	$ git commit -m "ja-JP: Start translation of 'XXX.textile'."
 	$ git pull --rebase
 	$ git push
-	$ emacs XXX.textile.trans        # 翻訳する
-
-	### 翻訳された *.textile ファイルを生成
-	$ rake XXX.textile
-	[create] XXX.textile
-	$ lv -Iu XXX.textile             # UTF-8 であることを確認
-	$ rake clean                     # 誤ったコミットを防ぐため
-
-	### *.trans ファイルをコミット (*.textile はコミットしないこと!)
-	$ git add XXX.textile.trans
-	$ git commit -m "Finish translation of 'XXX.textile'."
-	$ git pull --rebase
-	$ git push
-
-
-英語部分が更新されたとき
-------------------------
-
-	### 翻訳リポジトリを更新
-	$ cd docrails/
-	$ git stash         # 変更ファイルがあるとき
-	$ git pull --rebase
-	$ git stash pop     # git stash したとき
-
-	### 英語の差分を確認
-	$ cd railties/guides/source/ja-JP/
-	$ rake diff                               # 全体
-	$ rake diff F=XXX.textile.trans   # 個別
-
-	### 英語の部分を更新
-	$ emacs XXX.textile.trans         # 手動
-	$ rake diff F=XXX.textile.trans   # 差分がないことを確認
-
-	### 翻訳を更新
-	$ git add XXX.textile.trans
-	$ git commit -m "Start update of 'XXX.textile.trans'."
-	$ emacs XXX.textile.trans
+	$ emacs XXX.textile.trans         # 翻訳する
 
 	### 翻訳された *.textile ファイルを生成
 	$ rake XXX.textile
@@ -200,7 +174,41 @@
 
 	### *.trans ファイルをコミット (*.textile はコミットしないこと!)
 	$ git add XXX.textile.trans
-	$ git commit -m "Finish update of 'XXX.textile.trans'."
+	$ git commit -m "ja-JP: Finish translation of 'XXX.textile'."
+	$ git pull --rebase
+	$ git push
+
+
+英語部分が更新されたとき
+------------------------
+
+	### 翻訳リポジトリを更新
+	$ cd docrails/
+	$ git stash                       # 変更ファイルがあるとき
+	$ git pull --rebase               # (TODO: --rebase は必要？)
+	$ git stash pop                   # git stash したとき
+
+	### 英語の差分を確認
+	$ cd railties/guides/source/ja-JP/
+	$ rake diff                       # 全体
+	$ rake diff F=XXX.textile.trans   # 個別
+
+	### 英語の部分を更新
+	$ emacs XXX.textile.trans         # 手動で差分を適用
+	$ rake diff F=XXX.textile.trans   # 差分がないことを確認
+
+	### 翻訳を更新
+	$ emacs XXX.textile.trans         # 手動で差分を翻訳
+
+	### 翻訳された *.textile ファイルを生成
+	$ rake XXX.textile
+	[create] XXX.textile
+	$ lv -Iu XXX.textile              # UTF-8 であることを確認
+	$ rake clean                      # 誤ったコミットを防ぐため
+
+	### *.trans ファイルをコミット (*.textile はコミットしないこと!)
+	$ git add XXX.textile.trans
+	$ git commit -m "ja-JP: Update translation of 'XXX.textile'."
 	$ git pull --rebase
 	$ git push
 
@@ -210,88 +218,92 @@
 
 	### 翻訳リポジトリを更新
 	$ cd docrails/
-	$ git stash         # 変更ファイルがあるとき
+	$ git stash                       # 変更ファイルがあるとき
 	$ git pull --rebase
-	$ git stash pop     # git stash したとき
+	$ git stash pop                   # git stash したとき
 
 	### 翻訳を更新
 	$ cd railties/guides/source/ja-JP/
-	$ emacs XXX.textile.trans
+	$ emacs XXX.textile.trans         # 手動で翻訳を修正
 
 	### 翻訳された *.textile ファイルを生成
 	$ rake XXX.textile
 	[create] XXX.textile
-	$ lv -Iu XXX.textile             # UTF-8 であることを確認
-	$ rake clean                     # 誤ったコミットを防ぐため
+	$ lv -Iu XXX.textile              # UTF-8 であることを確認
+	$ rake clean                      # 誤ったコミットを防ぐため
 
 	### *.trans ファイルをコミット (*.textile はコミットしないこと!)
 	$ git add XXX.textile.trans
-	$ git commit -m "Change translation of 'XXX.textile.trans'."
+	$ git commit -m "Fix translation of 'XXX.textile'."
 	$ git pull --rebase
 	$ git push
 
 
 
-管理作業
-========
+##管理作業
+##========
+##
+##管理人のみが行なう作業です。他の方は気にしなくてもいいはず。
+##
+##
+##準備
+##----
+##
+##	### 本家リポジトリを追加
+##	$ cd docrails/
+##	$ git remote add lifo git://github.com/lifo/docrails.git
+##	$ git remote -v              # 追加されたことを確認
+##	lifo    git@github.com:lifo/docrails.git
+##	origin  git@github.com:kwatch/docrails.git
+##
+##
+##本家リポジトリから翻訳リポジトリへのマージ
+##------------------------------------------
+##
+##(TODO: 要見直し)
+##
+##	### 本家リポジトリをマージ
+##	$ git stash                  # 変更したファイルがある場合
+##	$ git pull lifo master       # --rebase はしない (でいいよね?)
+##	$ git stash pop              # git stash した場合
+##
+##	### マージを翻訳リポジトリに反映
+##	$ git push
+##
+##
+##翻訳リポジトリから本家リポジトリへのマージ
+##------------------------------------------
+##
+##(TODO: 要見直し)
+##
+##	### 本家リポジトリ (のクローン) に移動し、更新
+##	$ cd ../docrails_lifo
+##	$ git stash                  # 変更したファイルがある場合
+##	$ git checkout master
+##	$ git pull --rebase
+##	$ git checkout ja-JP
+##	$ git merge master
+##	$ git rebase master          # (TODO: 必要?)
+##	$ git stash pop              # git stash した場合
+##
+##	### 翻訳された *.textile を翻訳リポジトリからコピー
+##	$ cd railties/guides/source/ja-JP/
+##	$ d=../../../../docrails/railties/guides/source/ja-JP/
+##	$ (cd $d; rake ja; tar cf - **/*.textile) | tar xf -
+##
+##	### 翻訳された *.textile を本家リポジトリに反映
+##	$ git branch                 # ja-JP ブランチであることを確認
+##	* ja-JP
+##          master
+##	$ git status
+##	$ git add **/*.textile
+##	$ git ci -m "ja-JP: Translate 'XXX.textile'."
+##	$ git push
 
-管理人のみが行なう作業です。他の方は気にしなくてもいいはず。
 
 
-準備
-----
-
-	### 本家リポジトリを追加
-	$ cd docrails/
-	$ git remote add lifo git://github.com/lifo/docrails.git
-	$ git remote -v              # 追加されたことを確認
-	lifo    git@github.com:lifo/docrails.git
-	origin  git@github.com:kwatch/docrails.git
-
-
-本家リポジトリから翻訳リポジトリへのマージ
-------------------------------------------
-
-	### 本家リポジトリをマージ
-	$ git stash                  # 変更したファイルがある場合
-	$ git pull lifo master       # --rebase はしない (でいいよね?)
-	$ git stash pop              # git stash した場合
-
-	### マージを翻訳リポジトリに反映
-	$ git push
-
-
-翻訳リポジトリから本家リポジトリへのマージ
-------------------------------------------
-
-	### 本家リポジトリ (のクローン) に移動し、更新
-	$ cd ../docrails
-	$ git stash                  # 変更したファイルがある場合
-	$ git checkout master
-	$ git pull --rebase
-	$ git checkout japanese
-	$ git merge master
-	$ git rebase origin
-	$ git stash pop              # git stash した場合
-
-	### 翻訳された *.textile を翻訳リポジトリからコピー
-	$ cd railties/guides/source/ja-JP/
-	$ d=../../docrails/railties/guides/source/ja-JP/
-	$ (cd $d; rake jp; tar cf - **/*.textile) | tar xf -
-
-	### 翻訳された *.textile を本家リポジトリに反映
-	$ git branch                 # japanese ブランチであることを確認
-	* japanese
-          master
-	$ git status
-	$ git add **/*.textile
-	$ git ci -m "(jp) Translate 'XXX.textile'."
-	$ git push
-
-
-
-Rake タスク
-===========
+Rake タスク一覧
+===============
 
 : rake
 	rake clean と同義。
@@ -305,7 +317,7 @@ Rake タスク
 	git status の結果から *.textile を取り除いて出力する。
 
 : rake XXX.textile.trans
-	*.trans のスケルトンを、../en/XXX.textile から作成する。
+	$SRC/ja-JP/*.textile.trans のスケルトンを、$SRC/XXX.textile から作成する。
 
 : rake trans
 	すべての *.trans のスケルトンを作成する。
@@ -313,7 +325,7 @@ Rake タスク
 : rake XXX.textile
 	*.trans から日本語翻訳だけを取り出し、*.textile ファイルに保存する。
 
-: rake jp
+: rake ja
 	すべての *.trans から日本語翻訳だけを取り出し、*.textile ファイルに保存する。
 
 : rake diff F=XXX.textile.trans
