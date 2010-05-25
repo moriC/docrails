@@ -24,6 +24,8 @@ def unmark_ja(str); str.gsub(/^\.JA\t/, ""); end
 def remove_en(str); str.gsub(/^\.EN\t.*\n/, ''); end
 def remove_ja(str); str.gsub(/^\.JA\t.*\n/, ''); end
 
+def remove_tabs(str); str.gsub(/^\t/, ''); end
+
 EN_DIR = ".."
 
 
@@ -33,9 +35,7 @@ task :clean do |t|
 end
 
 desc "same as 'rake clean'"
-task :default do |t|
-  clean_textile_files()
-end
+task :default => :clean
 
 def clean_textile_files
   #rm_f Dir.glob("**/*.textile")
@@ -107,7 +107,7 @@ task :diff do |t|
     en_path = File.join(EN_DIR, trans_path.sub(/\.trans\z/, ''))
     tmp_path = trans_path + '.EN'
     s = File.read(trans_path)
-    s = unmark_en(remove_ja(s))
+    s = remove_tabs(unmark_en(remove_ja(s)))
     if s != File.read(en_path)
       begin
         File.write(tmp_path, s)
@@ -147,5 +147,5 @@ end
 def create_ja_textile_file(ja_path, trans_path)
   $stdout.puts "* #{trans_path} -> #{ja_path}"
   s = File.read(trans_path)
-  File.write(ja_path, unmark_ja(remove_en(s)))
+  File.write(ja_path, remove_tabs(unmark_ja(remove_en(s))))
 end
