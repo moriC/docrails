@@ -21,7 +21,7 @@
 .JA	endprologue.
 
 .EN	WARNING. This Guide is based on Rails 3.0. Some of the code shown here will not work in other versions of Rails.
-.JA	警告: 本ガイドでは Rails 3.0 を使っています。ここで登場するコードは、他のバージョンのRailsでは動作しないでしょう。
+.JA	WARNING. 本ガイドでは Rails 3.0 を使っています。ここで登場するコードは、他のバージョンのRailsでは動作しないでしょう。
 
 .EN	If you're used to using raw SQL to find database records then, generally, you will find that there are better ways to carry out the same operations in Rails. Active Record insulates you from the need to use SQL in most cases.
 .JA	もし生のSQLを使ってデータベースレコードを検索しているなら、一般的に言って、Rails では同じことをもっとうまい方法でできることがわかるでしょう。Active Record を使えばほとんどの場合においてSQLを使う必要はありません。
@@ -167,7 +167,7 @@
 	</sql>
 
 .EN	<tt>Model.last</tt> returns +nil+ if no matching record is found. No exception will be raised.
-.JA	<tt>Model.last</tt> は、もし一致するレコードがなければ +ni+l を返します。例外は発生しません。
+.JA	<tt>Model.last</tt> は、もし一致するレコードがなければ +nil+ を返します。例外は発生しません。
 
 .EN	h4. Retrieving Multiple Objects
 .JA	h4. 複数のオブジェクトを取り出す
@@ -270,7 +270,7 @@
 .JA	h5. +find_in_batches+
 
 .EN	You can also work by chunks instead of row by row using +find_in_batches+. This method is analogous to +find_each+, but it yields arrays of models instead:
-.JA	1 行ずつ処理を行うかわりに、+find_in_batches+ を使うことでチャンク〔訳注: データの固まり、ここでは配列を意味する〕ごとに処理を行うこともできます。このメソッドは +find_each+ に似てますが、〔訳注: モデルのかわりに〕モデルの配列を受け取って yield します:
+.JA	1 行ずつ処理を行うかわりに、+find_in_batches+ を使うことでチャンク〔訳注: データの固まりのこと。ここでは配列を意味する〕ごとに処理を行うこともできます。このメソッドは +find_each+ に似てますが、〔訳注: モデルのかわりに〕モデルの配列を受け取って yield します:
 
 	<ruby>
 .EN	# Works in chunks of 1000 invoices at a time.
@@ -756,120 +756,144 @@
 	</ruby>
 
 .EN	h3. Joining Tables
+.JA	h3. テーブルのジョイン
 
 .EN	<tt>Model.find</tt> provides a +:joins+ option for specifying +JOIN+ clauses on the resulting SQL. There multiple different ways to specify the +:joins+ option:
+.JA	<tt>Model.find</tt> は SQL における +JOIN+ 句を指定するための +:joins+ オプションを提供しています。+:joins+ オプションの指定方法は複数あります:
 
 .EN	h4. Using a String SQL Fragment
+.JA	h4. 文字列による SQL フラグメントを使った方法
 
 .EN	You can just supply the raw SQL specifying the +JOIN+ clause to the +:joins+ option. For example:
+.JA	+:joins+ オプションに、+JOIN+ 句を表す生の SQL を指定できます。たとえば:
 
-.EN	<ruby>
-.EN	Client.all(:joins => 'LEFT OUTER JOIN addresses ON addresses.client_id = clients.id')
-.EN	</ruby>
+	<ruby>
+	Client.all(:joins => 'LEFT OUTER JOIN addresses ON addresses.client_id = clients.id')
+	</ruby>
 
 .EN	This will result in the following SQL:
+.JA	これは次のような SQL になります:
 
-.EN	<sql>
-.EN	SELECT clients.* FROM clients LEFT OUTER JOIN addresses ON addresses.client_id = clients.id
-.EN	</sql>
+	<sql>
+	SELECT clients.* FROM clients LEFT OUTER JOIN addresses ON addresses.client_id = clients.id
+	</sql>
 
 .EN	h4. Using Array/Hash of Named Associations
+.JA	h4. 名前付きアソシエーションの配列またはハッシュを使う
 
 .EN	WARNING: This method only works with +INNER JOIN+,
+.JA	WARNING: この方法は +INNER JOIN+ に対してのみ有効。
 
 .EN	<br />
 
 .EN	Active Record lets you use the names of the "associations":association_basics.html defined on the model as a shortcut for specifying the +:joins+ option.
+.JA	Active Record では +:joins+ オプションを指定するときに、モデルクラスで定義された "アソシエーション":association_basics.html の名前を短縮名として指定できます。
 
 .EN	For example, consider the following +Category+, +Post+, +Comments+ and +Guest+ models:
+.JA	たとえば、 +Category+ と +Post+ と +Comments+ と +Guest+ というモデルがあったとします:
 
-.EN	<ruby>
-.EN	class Category < ActiveRecord::Base
-.EN	  has_many :posts
-.EN	end
+	<ruby>
+	class Category < ActiveRecord::Base
+	  has_many :posts
+	end
 
-.EN	class Post < ActiveRecord::Base
-.EN	  belongs_to :category
-.EN	  has_many :comments
-.EN	  has_many :tags
-.EN	end
+	class Post < ActiveRecord::Base
+	  belongs_to :category
+	  has_many :comments
+	  has_many :tags
+	end
 
-.EN	class Comments < ActiveRecord::Base
-.EN	  belongs_to :post
-.EN	  has_one :guest
-.EN	end
+	class Comments < ActiveRecord::Base
+	  belongs_to :post
+	  has_one :guest
+	end
 
-.EN	class Guest < ActiveRecord::Base
-.EN	  belongs_to :comment
-.EN	end
-.EN	</ruby>
+	class Guest < ActiveRecord::Base
+	  belongs_to :comment
+	end
+	</ruby>
 
 .EN	Now all of the following will produce the expected join queries using +INNER JOIN+:
+.JA	この場合、以下に示す例のすべてで、 +INNER JOIN+ を使った期待通りの join クエリが生成されます:
 
 .EN	h5. Joining a Single Association
+.JA	h5. 単一のアソシエーションによるジョイン
 
-.EN	<ruby>
-.EN	Category.joins(:posts)
-.EN	</ruby>
+	<ruby>
+	Category.joins(:posts)
+	</ruby>
 
 .EN	This produces:
+.JA	この結果は次の通りです:
 
-.EN	<sql>
-.EN	SELECT categories.* FROM categories
-.EN	  INNER JOIN posts ON posts.category_id = categories.id
-.EN	</sql>
+	<sql>
+	SELECT categories.* FROM categories
+	  INNER JOIN posts ON posts.category_id = categories.id
+	</sql>
 
 .EN	h5. Joining Multiple Associations
+.JA	h5. 複数のアソシエーションによるジョイン
 
-.EN	<ruby>
-.EN	Post.joins(:category, :comments)
-.EN	</ruby>
+	<ruby>
+	Post.joins(:category, :comments)
+	</ruby>
 
 .EN	This produces:
+.JA	この結果は次の通りです:
 
-.EN	<sql>
-.EN	SELECT posts.* FROM posts 
-.EN	  INNER JOIN categories ON posts.category_id = categories.id
-.EN	  INNER JOIN comments ON comments.post_id = posts.id
-.EN	</sql>
+	<sql>
+	SELECT posts.* FROM posts 
+	  INNER JOIN categories ON posts.category_id = categories.id
+	  INNER JOIN comments ON comments.post_id = posts.id
+	</sql>
 
 .EN	h5. Joining Nested Associations (Single Level)
+.JA	h5. 入れ子 (1 段) になったアソシエーションによるジョイン
 
-.EN	<ruby>
-.EN	Post.joins(:comments => :guest)
-.EN	</ruby>
+	<ruby>
+	Post.joins(:comments => :guest)
+	</ruby>
 
 .EN	h5. Joining Nested Associations (Multiple Level)
+.JA	h5. 入れ子 (多段) になったアソシエーションによるジョイン
 
-.EN	<ruby>
-.EN	Category.joins(:posts => [{:comments => :guest}, :tags])
-.EN	</ruby>
+	<ruby>
+	Category.joins(:posts => [{:comments => :guest}, :tags])
+	</ruby>
 
 .EN	h4. Specifying Conditions on the Joined Tables
+.JA	h4. ジョイン用テーブルを使った条件の指定
 
 .EN	You can specify conditions on the joined tables using the regular "Array":#array-conditions and "String":#pure-string-conditions conditions. "Hash conditions":#hash-conditions provides a special syntax for specifying conditions for the joined tables:
+.JA	通常の "配列による条件指定":#array-conditions または "文字列による条件指定":#pure-string-conditions を、ジョイン用テーブル (joined table) に対して指定できます。 "ハッシュによる条件指定":#hash-conditions は、ジョイン用テーブルに対して特別な文法を提供します:
 
-.EN	<ruby>
-.EN	time_range = (Time.now.midnight - 1.day)..Time.now.midnight
-.EN	Client.joins(:orders).where('orders.created_at' => time_range)
-.EN	</ruby>
+	<ruby>
+	time_range = (Time.now.midnight - 1.day)..Time.now.midnight
+	Client.joins(:orders).where('orders.created_at' => time_range)
+	</ruby>
 
 .EN	An alternative and cleaner syntax to this is to nest the hash conditions:
+.JA	より明確な別の方法として、ハッシュによる条件指定を入れ子にする方法があります:
 
-.EN	<ruby>
-.EN	time_range = (Time.now.midnight - 1.day)..Time.now.midnight
-.EN	Client.joins(:orders).where(:orders => {:created_at => time_range})
-.EN	</ruby>
+	<ruby>
+	time_range = (Time.now.midnight - 1.day)..Time.now.midnight
+	Client.joins(:orders).where(:orders => {:created_at => time_range})
+	</ruby>
 
 .EN	This will find all clients who have orders that were created yesterday, again using a +BETWEEN+ SQL expression.
+.JA	この例では SQL の +BETWEEN+ 式を使って、昨日に注文を作成した顧客をすべて検索します。
 
 .EN	h3. Eager Loading Associations
+.JA	h3. Eager ローディングアソシエーション
 
 .EN	Eager loading is the mechanism for loading the associated records of the objects returned by +Model.find+ using as few queries as possible.
+.JA	Eager ローディングは、 +Model.find+ によって返されるオブジェクトに関連した (associated) レコードを、できるだけ少ないクエリを使って読み込むメカニズムです。
 
 .EN	<strong>N <plus> 1 queries problem</strong>
+.JA	<strong>N <plus> 1 クエリ問題</strong>
 
 .EN	Consider the following code, which finds 10 clients and prints their postcodes:
+.JA	次のようなコードを考えます。これは、顧客を 10 名検索してそれらの郵便番号を表示しています:
 
 .EN	<ruby>
 .EN	clients = Client.all(:limit => 10)
@@ -880,12 +904,16 @@
 .EN	</ruby>
 
 .EN	This code looks fine at the first sight. But the problem lies within the total number of queries executed. The above code executes 1 ( to find 10 clients ) <plus> 10 ( one per each client to load the address ) = <strong>11</strong> queries in total.
+.JA	このコードは、一見問題がなさそうに思えます。しかし実行されるクエリの総数が問題となります。上のコードでは、1 個 ( 顧客 10 名を検索するため ) <plus> 10 個 ( 顧客ごとに住所を読み込むため ) = <strong>11 個</strong>のクエリが実行されます。
 
 .EN	<strong>Solution to N <plus> 1 queries problem</strong>
+.JA	<strong>N <plus> 1 クエリ問題を解決する方法</strong>
 
 .EN	Active Record lets you specify all the associations in advanced that are going to be loaded. This is possible by specifying the +includes+ method of the +Model.find+ call. With +includes+, Active Record ensures that all the specified associations are loaded using minimum possible number of queries.
+.JA	Active Record では、読み込まれるであろうアソシエーションを事前にすべて指定できます。これは +Model.find+ の呼び出しに +includes+ メソッドを指定することで実現できます。Active Record では、すべての指定されたアソシエーションが、最小のクエリ数で読み込まれます。
 
 .EN	Revisiting the above case, we could rewrite +Client.all+ to use eager load addresses:
+.JA	上で出た例を改訂して、eager ローディングを使って住所を読み込むよう +Client.all+ を書き直してみましょう:
 
 .EN	<ruby>
 .EN	clients = Client.includes(:address).limit(10)
@@ -896,201 +924,254 @@
 .EN	</ruby>
 
 .EN	The above code will execute just <strong>2</strong> queries, as opposed to <strong>11</strong> queries in the previous case:
+.JA	前は <strong>11 個</strong>のクエリが実行されたのに対し、上のコードはちょうど <strong>2 個</strong>のクエリだけが実行されます。
 
-.EN	<sql>
-.EN	SELECT * FROM clients LIMIT 10
-.EN	SELECT addresses.* FROM addresses
-.EN	  WHERE (addresses.client_id IN (1,2,3,4,5,6,7,8,9,10))
-.EN	</sql>
+	<sql>
+	SELECT * FROM clients LIMIT 10
+	SELECT addresses.* FROM addresses
+	  WHERE (addresses.client_id IN (1,2,3,4,5,6,7,8,9,10))
+	</sql>
 
 .EN	h4. Eager Loading Multiple Associations
+.JA	h4. 複数のアソシエーションに体する Eager ローディング
 
 .EN	Active Record lets you eager load any possible number of associations with a single +Model.find+ call by using an array, hash, or a nested hash of array/hash with the +includes+ method.
+.JA	Active Record では、配列やハッシュやそれらの入れ子を +includes+ メソッドに指定することで、ひとつの +Model.find+ 呼び出しに対して任意の数のアソシエーションを Eager ローディングで読み込めます。
 
 .EN	h5. Array of Multiple Associations 
+.JA	h5. 複数のアソシエーションを含む配列
 
-.EN	<ruby>
-.EN	Post.includes(:category, :comments)
-.EN	</ruby>
+	<ruby>
+	Post.includes(:category, :comments)
+	</ruby>
 
 .EN	This loads all the posts and the associated category and comments for each post.
+.JA	この例はすべての投稿 (post) と、各投稿に関連したカテゴリやコメントを読み込みます。
+.JA	〔訳注: どこに配列が?〕
 
 .EN	h5. Nested Associations Hash
+.JA	h5. ネストしたアソシエーションのハッシュ
 
-.EN	<ruby>
-.EN	Category.find(1).includes(:posts => [{:comments => :guest}, :tags])
-.EN	</ruby>
+	<ruby>
+	Category.find(1).includes(:posts => [{:comments => :guest}, :tags])
+	</ruby>
 
 .EN	The above code finds the category with id 1 and eager loads all the posts associated with the found category. Additionally, it will also eager load every posts' tags and comments. Every comment's guest association will get eager loaded as well.
+.JA	上のコードは、id が 1 であるカテゴリを検索し、そのカテゴリに関連したすべての投稿 (post) を Eager ローディングを使って読み込みます。また読み込まれた投稿に関連するタグとコメントも Eager ローディングを使って読み込みます。同様にすべてのコメントにおいても、ゲストのアソシエーションが Eager ローディングで読み込まれます。
 
 .EN	h4. Specifying Conditions on Eager Loaded Associations
+.JA	h4. Eager ローディングで読み込まれたアソシエーションに対する条件指定
 
 .EN	Even though Active Record lets you specify conditions on the eager loaded associations just like +joins+, the recommended way is to use "joins":#joining-tables instead. 
+.JA	Active Record は Eager ローディングで読み込まれたアソシエーションに対しても、ちょうど +joins+ のときのように条件指定を行うことができますが、素直に "joins":#joining-tables メソッドを使うほうをお勧めします。
 
 .EN	h3. Dynamic Finders
+.JA	h3. 動的ファインダ
 
 .EN	For every field (also known as an attribute) you define in your table, Active Record provides a finder method. If you have a field called +name+ on your +Client+ model for example, you get +find_by_name+ and +find_all_by_name+ for free from Active Record. If you have also have a +locked+ field on the +Client+ model, you also get +find_by_locked+ and +find_all_by_locked+.
+.JA	Active Record では、テーブルに定義したどのフィールド (属性ともいう) にも使えるようなファインダ (finder) メソッド〔訳注: 検索用メソッドのこと〕が用意されています。たとえば +Client+ モデルに +name+ というフィールドがあるとすると、Active Record では +find_by_name+ と +find_all_by_name+ というメソッドが自動的に利用可能になります。もし +locked+ というフィールドが +Client+ モデルにあれば、 +find_by_locked+ と +find_all_by_locked+ が利用可能です。〔訳注: これらは事前に定義されるものではなく、呼ばれたときに初めて定義される検索用メソッドであり、これらを動的ファインダ (dynamic finder) といいます。〕
 
 .EN	You can do +find_last_by_*+ methods too which will find the last record matching your argument.
+.JA	また引数にマッチした中で最後のレコードを取ってくるための +find_last_by_*+ メソッドも利用できます。
 
 .EN	You can specify an exclamation point (<tt>!</tt>) on the end of the dynamic finders to get them to raise an +ActiveRecord::RecordNotFound+ error if they do not return any records, like +Client.find_by_name!("Ryan")+
+.JA	たとえば +Client.find_by_name!("Ryan")+ のように、エクスクラメーションポイント (「<tt>!</tt>」のこと) を動的ファインダ名の最後につけると、該当するレコードが見つからなかった場合は +ActiveRecord::RecordNotFound+ エラーが発生します。
 
 .EN	If you want to find both by name and locked, you can chain these finders together by simply typing +and+ between the fields for example +Client.find_by_name_and_locked("Ryan", true)+.
+.JA	name と locked の両方のフィールドを使って検索したい場合は、たとえば +Client.find_by_name_and_locked("Ryan", true)+ のように、単にそれらを +and+ でつなげるだけでいいです。
 
 
 .EN	There's another set of dynamic finders that let you find or create/initialize objects if they aren't found. These work in a similar fashion to the other finders and can be used like +find_or_create_by_name(params[:name])+. Using this will firstly perform a find and then create if the find returns +nil+. The SQL looks like this for +Client.find_or_create_by_name("Ryan")+:
+.JA	動的ファインダの別の種類として、オブジェクトを検索し、見つからなければ新規作成/初期化を行うというものもあります。これらは、メソッド名が +find_or_create_by_name(params[:name])+ のようになる以外は、他のファインダと同じように動作します。
 
-.EN	<sql>
-.EN	SELECT * FROM clients WHERE (clients.name = 'Ryan') LIMIT 1
-.EN	BEGIN
-.EN	INSERT INTO clients (name, updated_at, created_at, orders_count, locked)
-.EN	  VALUES('Ryan', '2008-09-28 15:39:12', '2008-09-28 15:39:12', 0, '0')
-.EN	COMMIT
-.EN	</sql>
+	<sql>
+	SELECT * FROM clients WHERE (clients.name = 'Ryan') LIMIT 1
+	BEGIN
+	INSERT INTO clients (name, updated_at, created_at, orders_count, locked)
+	  VALUES('Ryan', '2008-09-28 15:39:12', '2008-09-28 15:39:12', 0, '0')
+	COMMIT
+	</sql>
 
 .EN	+find_or_create+'s sibling, +find_or_initialize+, will find an object and if it does not exist will act similar to calling +new+ with the arguments you passed in. For example:
+.JA	+find_or_create+'s の兄弟版として +find_or_initialize+ があります。これは、まず検索を行い、見つからなかった場合は渡された引数を使って〔訳注: +create+ ではなく〕 +new+ を呼び出します。
 
-.EN	<ruby>
-.EN	client = Client.find_or_initialize_by_name('Ryan')
-.EN	</ruby>
+	<ruby>
+	client = Client.find_or_initialize_by_name('Ryan')
+	</ruby>
 
 .EN	will either assign an existing client object with the name "Ryan" to the client local variable, or initialize a new object similar to calling +Client.new(:name => 'Ryan')+. From here, you can modify other fields in client by calling the attribute setters on it: +client.locked = true+ and when you want to write it to the database just call +save+ on it.
+.JA	上の場合だと、名前が "Ryan" である既存の顧客オブジェクトをローカル変数 client に代入するか、〔訳注: そのような顧客が見つからなければ〕 +Client.new(:name => 'Ryan')+ を呼び出して新しいオブジェクトを作成し初期化します。ここから、 +client.locked = true+ のようにセッターメソッドを使って顧客の他のフィールドを変更できます。またそれをデータベースに保存したいときは +save+ メソッドを呼び出します。
 
 .EN	h3. Finding by SQL
+.JA	h3. SQL による検索
 
 .EN	If you'd like to use your own SQL to find records in a table you can use +find_by_sql+. The +find_by_sql+ method will return an array of objects even if the underlying query returns just a single record. For example you could run this query:
+.JA	+find_by_sql+ を使って、テーブル中のレコードを検索するための独自の SQL を指定できます。 +find_by_sql+ メソッドは、たとえ 1 つのレコードしか返さないような SQL が指定されたとしても、オブジェクトの配列を返します。たとえば次のようなクエリが実行できます:
 
-.EN	<ruby>
-.EN	Client.find_by_sql("SELECT * FROM clients 
-.EN	  INNER JOIN orders ON clients.id = orders.client_id 
-.EN	  ORDER clients.created_at desc")
-.EN	</ruby>
+	<ruby>
+	Client.find_by_sql("SELECT * FROM clients 
+	  INNER JOIN orders ON clients.id = orders.client_id 
+	  ORDER clients.created_at desc")
+	</ruby>
 
 .EN	+find_by_sql+ provides you with a simple way of making custom calls to the database and retrieving instantiated objects.
+.JA	+find_by_sql+ を使えば、データベースのカスタムコールを呼び出してインスタンス化されたオブジェクトを取り出すのが、簡潔に実行できます。
 
 .EN	h3. +select_all+
+.JA	h3. +select_all+
 
 .EN	<tt>find_by_sql</tt> has a close relative called +connection#select_all+. +select_all+ will retrieve objects from the database using custom SQL just like +find_by_sql+ but will not instantiate them. Instead, you will get an array of hashes where each hash indicates a record.
+.JA	<tt>find_by_sql</tt> とよく似たものに +connection#select_all+ というのがあります。 +select_all+ は +find_by_sql+ と同様にカスタム SQL を使ってデータベースからオブジェクトを取り出しますが、インスタンス化を行いません。かわりに、レコードごとのハッシュを要素とする配列が返されます。
 
-.EN	<ruby>
-.EN	Client.connection.select_all("SELECT * FROM clients WHERE id = '1'")
-.EN	</ruby>
+	<ruby>
+	Client.connection.select_all("SELECT * FROM clients WHERE id = '1'")
+	</ruby>
 
 .EN	h3. Existence of Objects
+.JA	h3. オブジェクトの存在確認
 
 .EN	If you simply want to check for the existence of the object there's a method called +exists?+. This method will query the database using the same query as +find+, but instead of returning an object or collection of objects it will return either +true+ or +false+.
+.JA	オブジェクトが存在するかどうかをチェックしたいだけなら、 +exists?+ というメソッドが使えます。このメソッドは +find+ と同じクエリを使ってデータベースを検索しますが、オブジェクトやそのコレクションを返すかわりに、 +true+ または +false+ を返します。
 
-.EN	<ruby>
-.EN	Client.exists?(1)
-.EN	</ruby>
+	<ruby>
+	Client.exists?(1)
+	</ruby>
 
 .EN	The +exists?+ method also takes multiple ids, but the catch is that it will return true if any one of those records exists.
+.JA	+exists?+ メソッドは複数の id をとることができますが、そのうちのどれかひとつでも存在していれば true を返します。
 
-.EN	<ruby>
-.EN	Client.exists?(1,2,3)
-.EN	# or
-.EN	Client.exists?([1,2,3])
-.EN	</ruby>
+	<ruby>
+	Client.exists?(1,2,3)
+	# or
+	Client.exists?([1,2,3])
+	</ruby>
 
 .EN	Further more, +exists+ takes a +conditions+ option much like find:
+.JA	もっと言うと、 +exists+ は find によく似た +conditions+ オプションを取ることができます:
 
-.EN	<ruby>
-.EN	Client.exists?(:conditions => "first_name = 'Ryan'")
-.EN	</ruby>
+	<ruby>
+	Client.exists?(:conditions => "first_name = 'Ryan'")
+	</ruby>
 
 .EN	It's even possible to use +exists?+ without any arguments:
+.JA	引数なしで +exists?+ を呼び出すことも可能です。
 
-.EN	<ruby>
-.EN	Client.exists?
-.EN	</ruby>
+	<ruby>
+	Client.exists?
+	</ruby>
 
 .EN	The above returns +false+ if the +clients+ table is empty and +true+ otherwise.
+.JA	この場合、 +clients+ テーブルが空なら +false+ が返され、そうでなければ +true+ が返されます。
 
 .EN	h3. Calculations
+.JA	h3. 計算
 
 .EN	This section uses count as an example method in this preamble, but the options described apply to all sub-sections.
+.JA	このセクションの前書きでは例として count メソッドを使用しますが、説明されたオプションはすべてのサブセクションで利用可能です。
 
 .EN	<tt>count</tt> takes conditions much in the same way +exists?+ does:
+.JA	<tt>count</tt> では +exists?+ と同じ方法で検索条件を指定できます:
 
-.EN	<ruby>
-.EN	Client.count(:conditions => "first_name = 'Ryan'")
-.EN	</ruby>
+	<ruby>
+	Client.count(:conditions => "first_name = 'Ryan'")
+	</ruby>
 
 .EN	Which will execute:
+.JA	これは次のような SQL を実行します:
 
-.EN	<sql>
-.EN	SELECT count(*) AS count_all FROM clients WHERE (first_name = 'Ryan')
-.EN	</sql>
+	<sql>
+	SELECT count(*) AS count_all FROM clients WHERE (first_name = 'Ryan')
+	</sql>
 
 .EN	You can also use the +includes+ or +joins+ methods for this to do something a little more complex:
+.JA	より複雑なことをするのに +includes+ メソッドや +joins+ メソッドを使うことができます:
 
-.EN	<ruby>
-.EN	Client.count.where("clients.first_name = 'Ryan' AND orders.status = 'received'").includes("orders")
-.EN	</ruby>
+	<ruby>
+	Client.count.where("clients.first_name = 'Ryan' AND orders.status = 'received'").includes("orders")
+	</ruby>
 
 .EN	Which will execute:
+.JA	これは次のような SQL を実行します:
 
-.EN	<sql>
-.EN	SELECT count(DISTINCT clients.id) AS count_all FROM clients
-.EN	  LEFT OUTER JOIN orders ON orders.client_id = client.id WHERE
-.EN	  (clients.first_name = 'Ryan' AND orders.status = 'received')
-.EN	</sql>
+	<sql>
+	SELECT count(DISTINCT clients.id) AS count_all FROM clients
+	  LEFT OUTER JOIN orders ON orders.client_id = client.id WHERE
+	  (clients.first_name = 'Ryan' AND orders.status = 'received')
+	</sql>
 
 .EN	This code specifies +clients.first_name+ just in case one of the join tables has a field also called +first_name+ and it uses +orders.status+ because that's the name of our join table.
+.JA	このコードでは、ジョイン用のテーブル〔訳注: である orders 〕も +first_name+ というカラム名を持っている場合を考慮し、 +clients.first_name+ を指定しています。またジョイン用のテーブルが +orders+ なので、 +orders.status+ を指定しています。〔訳注: 要レビュー〕
 
 .EN	h4. Count
+.JA	h4. カウント
 
 .EN	If you want to see how many records are in your model's table you could call +Client.count+ and that will return the number. If you want to be more specific and find all the clients with their age present in the database you can use +Client.count(:age)+.
+.JA	モデルのテーブル中にどれだけのレコードがあるか調べたい場合、 +Client.count+ を呼ぶとレコード数を返します。もっと詳しく調べたい、たとえばデータベース中のすべてのクライアントを現在の年齢とともに調べたい場合は、 +Client.count(:age)+ のようにします。〔訳注: 要レビュー〕
 
 .EN	For options, please see the parent section, "Calculations":#calculations.
+.JA	オプションについては、前の "Calculations":#calculations セクションをご覧下さい。
 
 .EN	h4. Average
+.JA	h4. 平均値
 
 .EN	If you want to see the average of a certain number in one of your tables you can call the +average+ method on the class that relates to the table. This method call will look something like this:
+.JA	もしテーブル中のある数値の平均値を知りたい場合は、そのテーブルと対応するクラスの +average+ メソッドを呼び出します。このメソッド呼び出しは次のような感じになるでしょう:
 
-.EN	<ruby>
-.EN	Client.average("orders_count")
-.EN	</ruby>
+	<ruby>
+	Client.average("orders_count")
+	</ruby>
 
 .EN	This will return a number (possibly a floating point number such as 3.14159265) representing the average value in the field.
+.JA	この例だと、フィールドの平均値を表す数 (典型的には 3.14159265 のような浮動小数点数) を返します。
 
 .EN	For options, please see the parent section, "Calculations":#calculations.
+.JA	利用可能なオプションについては前の "計算":#calculations のセクションをご覧下さい。
 
 .EN	h4. Minimum
+.JA	h4. 最小値
 
 .EN	If you want to find the minimum value of a field in your table you can call the +minimum+ method on the class that relates to the table. This method call will look something like this:
+.JA	もしテーブル中のあるフィールドの最小値を調べたいなら、そのテーブルと対応するクラスの +minimum+ メソッドを呼び出します。このメソッド呼び出しは次のような感じになります:
 
-.EN	<ruby>
-.EN	Client.minimum("age")
-.EN	</ruby>
+	<ruby>
+	Client.minimum("age")
+	</ruby>
 
 .EN	For options, please see the parent section, "Calculations":#calculations.
+.JA	利用可能なオプションについては前の "計算":#calculations のセクションをご覧下さい。
 
 .EN	h4. Maximum
+.JA	h4. 最大値
 
 .EN	If you want to find the maximum value of a field in your table you can call the +maximum+ method on the class that relates to the table. This method call will look something like this:
+.JA	もしテーブル中のあるフィールドの最大値を調べたいなら、そのテーブルと対応するクラスの +maximum+ メソッドを呼び出します。このメソッド呼び出しは次のような感じになります:
 
-.EN	<ruby>
-.EN	Client.maximum("age")
-.EN	</ruby>
+	<ruby>
+	Client.maximum("age")
+	</ruby>
 
 .EN	For options, please see the parent section, "Calculations":#calculations.
+.JA	利用可能なオプションについては前の "計算":#calculations のセクションをご覧下さい。
 
 .EN	h4. Sum
+.JA	h4. 合計値
 
 .EN	If you want to find the sum of a field for all records in your table you can call the +sum+ method on the class that relates to the table. This method call will look something like this:
+.JA	もしテーブル中のあるフィールドの合計値を調べたいなら、そのテーブルと対応するクラスの +sum+ メソッドを呼び出します。このメソッド呼び出しは次のような感じになります:
 
-.EN	<ruby>
-.EN	Client.sum("orders_count")
-.EN	</ruby>
+	<ruby>
+	Client.sum("orders_count")
+	</ruby>
 
 .EN	For options, please see the parent section,  "Calculations":#calculations.
+.JA	利用可能なオプションについては前の "計算":#calculations のセクションをご覧下さい。
 
 .EN	h3. Changelog
+.JA	h3. 更新履歴
 
-.EN	"Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/16
+	"Lighthouse ticket":http://rails.lighthouseapp.com/projects/16213-rails-guides/tickets/16
 
-.EN	* April 7, 2010: Fixed document to validate XHTML 1.0 Strict. "Jaime Iniesta":http://jaimeiniesta.com
-.EN	* February 3, 2010: Update to Rails 3 by "James Miller":credits.html#bensie
-.EN	* February 7, 2009: Second version by "Pratik":credits.html#lifo
-.EN	* December 29 2008: Initial version by "Ryan Bigg":credits.html#radar
+	* April 7, 2010: Fixed document to validate XHTML 1.0 Strict. "Jaime Iniesta":http://jaimeiniesta.com
+	* February 3, 2010: Update to Rails 3 by "James Miller":credits.html#bensie
+	* February 7, 2009: Second version by "Pratik":credits.html#lifo
+	* December 29 2008: Initial version by "Ryan Bigg":credits.html#radar
