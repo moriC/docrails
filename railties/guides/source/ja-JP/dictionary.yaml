@@ -6,3 +6,18 @@
 - { en: router,         ja: ルータ }
 - { en: deployment,     ja: 配備 }
 - { en: lead developer, ja: 主任開発者 }
+- { en: retrieve,	ja: 取り出す }
+- { en: primary key,	ja: 主キー }
+- { en: equivarent,	ja: 同等な }
+- { en: for example,	ja: たとえば }		# 「例えば」ではない
+- { en: subset,		ja: [ サブセット, 部分集合 ] }
+- { en: result set,	ja: 結果セット }
+- { en: race condition, ja: 競合条件 }
+- { en: association,	ja: アソシエーション }  # or 関連?
+- { en: join,		ja: ジョイン }
+- { en: joined table,	ja: ジョイン用テーブル }  # really?
+- { en: eager loading,  ja: Eager ローディング }
+- { en: load,           ja: [ ロード, 読み込む ] }
+- { en: finder,         ja: ファインダ }    # or 検索用メソッド?
+
+
