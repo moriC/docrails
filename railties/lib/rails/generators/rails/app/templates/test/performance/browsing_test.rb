@@ -1,9 +1,12 @@
 require 'test_helper'
 require 'rails/performance_test_help'
 
-# Profiling results for each test method are written to tmp/performance.
 class BrowsingTest < ActionDispatch::PerformanceTest
-  def test_homepage
+  # Refer to the documentation for all available options
+  # self.profile_options = { runs: 5, metrics: [:wall_time, :memory],
+  #                          output: 'tmp/performance', formats: [:flat] }
+
+  test "homepage" do
     get '/'
   end
 end

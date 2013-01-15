@@ -1,34 +1,60 @@
-require 'rails/log_subscriber'
+require 'active_support/core_ext/time/conversions'
+require 'active_support/core_ext/object/blank'
 
 module Rails
   module Rack
-    # Log the request started and flush all loggers after it.
-    class Logger < Rails::LogSubscriber
-      def initialize(app)
-        @app = app
+    # Sets log tags, logs the request, calls the app, and flushes the logs.
+    class Logger < ActiveSupport::LogSubscriber
+      def initialize(app, taggers = nil)
+        @app, @taggers = app, taggers || []
       end
 
       def call(env)
-        before_dispatch(env)
-        @app.call(env)
-      ensure
-        after_dispatch(env)
+        request = ActionDispatch::Request.new(env)
+
+        if Rails.logger.respond_to?(:tagged)
+          Rails.logger.tagged(compute_tags(request)) { call_app(request, env) }
+        else
+          call_app(request, env)
+        end
       end
 
-      protected
+    protected
 
-        def before_dispatch(env)
-          request = ActionDispatch::Request.new(env)
-          path = request.fullpath.inspect rescue "unknown"
-
-          info "\n\nStarted #{request.method.to_s.upcase} #{path} " <<
-                      "for #{request.remote_ip} at #{Time.now.to_s(:db)}"
+      def call_app(request, env)
+        # Put some space between requests in development logs.
+        if Rails.env.development?
+          Rails.logger.debug ''
+          Rails.logger.debug ''
         end
 
-        def after_dispatch(env)
-          Rails::LogSubscriber.flush_all!
-        end
+        Rails.logger.info started_request_message(request)
+        @app.call(env)
+      ensure
+        ActiveSupport::LogSubscriber.flush_all!
+      end
 
+      # Started GET "/session/new" for 127.0.0.1 at 2012-09-26 14:51:42 -0700
+      def started_request_message(request)
+        'Started %s "%s" for %s at %s' % [
+          request.request_method,
+          request.filtered_path,
+          request.ip,
+          Time.now.to_default_s ]
+      end
+
+      def compute_tags(request)
+        @taggers.collect do |tag|
+          case tag
+          when Proc
+            tag.call(request)
+          when Symbol
+            request.send(tag)
+          else
+            tag
+          end
+        end
+      end
     end
   end
 end
