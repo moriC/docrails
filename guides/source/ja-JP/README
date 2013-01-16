@@ -7,17 +7,17 @@
 * 作業は必ず ja-JP ブランチで行ってください。
   master ブランチは本家へのマージ作業でのみ使用します。
 
-* 翻訳は必ず *.textile.trans ファイルで行ってください。
-  翻訳を直接 *.textile ファイルに書き込むのは禁止です。
+* 翻訳は必ず *.md.trans ファイルで行ってください。
+  翻訳を直接 *.md ファイルに書き込むのは禁止です。
   (具体的な手順は後述します。)
 
-* 翻訳リポジトリに *.textile ファイルをコミットしないでください。
-  みなさんがコミットするのは *.textile.trans だけです。
-  翻訳された *.textile は管理人が本家リポジトリにマージし、それが ja-JP ブランチにマージされます。
-  誤って *.textile をコミットするのを防ぐために、頻繁に rake clean を実行しましょう。
+* 翻訳リポジトリに *.md ファイルをコミットしないでください。
+  みなさんがコミットするのは *.md.trans だけです。
+  翻訳された *.md は管理人が本家リポジトリにマージし、それが ja-JP ブランチにマージされます。
+  誤って *.md をコミットするのを防ぐために、頻繁に rake clean を実行しましょう。
 
 * 翻訳時の文字コードは UTF-8 です。
-  nkf -g file.textfile や lv -Iu file.textile を実行し、UTF-8 になっていることを確認してください。
+  nkf -g file.textfile や lv -Iu file.md を実行し、UTF-8 になっていることを確認してください。
 
 * コミットログは英語でお願いします。これは本家リポジトリへのマージを考慮してのことです。
 
@@ -81,18 +81,18 @@
 : $SRC
 	ディレクトリ「docrails/railties/guides/source」のこと。
 
-: *.textile
-	拡張子が .textile のファイル。
-	$SRC/*.textile が英語の元原稿。
-	$SRC/ja-JP/*.textile が翻訳された原稿。
+: *.md
+	拡張子が .md のファイル。
+	$SRC/*.md が英語の元原稿。
+	$SRC/ja-JP/*.md が翻訳された原稿。
 
-: *.textile.trans
-	英語原稿と日本語翻訳とが混在した、拡張子が .textile.trans であるファイル。
+: *.md.trans
+	英語原稿と日本語翻訳とが混在した、拡張子が .md.trans であるファイル。
 	英語部分には ".EN\t" が、日本語部分には ".JA\t" が接頭辞としてついている。
-	$SRC/*.textile から $SRC/ja-JP/*.textile.trans が作成され、それに日本語翻訳をつけて、そこから翻訳部分だけを自動的に抜き出して $SRC/ja-JP/*.textile が作られる。
+	$SRC/*.md から $SRC/ja-JP/*.md.trans が作成され、それに日本語翻訳をつけて、そこから翻訳部分だけを自動的に抜き出して $SRC/ja-JP/*.md が作られる。
 
 : *.trans
-	今のところ *.textile.trans ファイルと同義。
+	今のところ *.md.trans ファイルと同義。
 
 
 
@@ -105,24 +105,24 @@
 新しく翻訳するとき
 ------------------
 
-1. (自動) $SRC/XXX.textile から $SRC/ja-JP/XXX.textile.trans のスケルトンを自動生成
-2. (手動) $SRC/ja-JP/XXX.textile.trans に日本語翻訳を手動で追加
-3. (自動) $SRC/ja-JP/XXX.textile.trans から日本語部分だけを抜き出して $SRC/ja-JP/XXX.textile を自動生成
+1. (自動) $SRC/XXX.md から $SRC/ja-JP/XXX.md.trans のスケルトンを自動生成
+2. (手動) $SRC/ja-JP/XXX.md.trans に日本語翻訳を手動で追加
+3. (自動) $SRC/ja-JP/XXX.md.trans から日本語部分だけを抜き出して $SRC/ja-JP/XXX.md を自動生成
 
 
 英語部分が更新されたとき
 ------------------------
 
-1. (自動) rake diff F=XXX.textile.trans を実行し、英語部分の更新内容を確認
-2. (手動) $SRC/ja-JP/XXX.textile.trans の英語と日本語を手動で更新
-3. (自動) $SRC/ja-JP/XXX.textile.trans から日本語部分だけを抜き出して $SRC/ja-JP/XXX.textile を自動生成
+1. (自動) rake diff F=XXX.md.trans を実行し、英語部分の更新内容を確認
+2. (手動) $SRC/ja-JP/XXX.md.trans の英語と日本語を手動で更新
+3. (自動) $SRC/ja-JP/XXX.md.trans から日本語部分だけを抜き出して $SRC/ja-JP/XXX.md を自動生成
 
 
 日本語翻訳だけを更新するとき
 ----------------------------
 
-1. (手動) $SRC/ja-JP/XXX.textile.trans を手動で更新
-2. (自動) $SRC/ja-JP/XXX.textile.trans から日本語部分だけを抜き出して $SRC/ja-JP/XXX.textile を自動生成
+1. (手動) $SRC/ja-JP/XXX.md.trans を手動で更新
+2. (自動) $SRC/ja-JP/XXX.md.trans から日本語部分だけを抜き出して $SRC/ja-JP/XXX.md を自動生成
 
 
 
@@ -153,28 +153,28 @@
 
 	### *.trans ファイルを作成
 	$ cd railties/guides/source/ja-JP/
-	$ ls ../XXX.textile
-	../XXX.textile
-	$ rake XXX.textile.trans
-	[create] XXX.textile.trans
+	$ ls ../XXX.md
+	../XXX.md
+	$ rake XXX.md.trans
+	[create] XXX.md.trans
 
 	### *.trans ファイルを翻訳
 	$ vi README                       # 分担表に名前を記入
-	$ git add README XXX.textile.trans
-	$ git commit -m "ja-JP: Start translation of 'XXX.textile'."
+	$ git add README XXX.md.trans
+	$ git commit -m "ja-JP: Start translation of 'XXX.md'."
 	$ git pull --rebase
 	$ git push
-	$ emacs XXX.textile.trans         # 翻訳する
+	$ emacs XXX.md.trans         # 翻訳する
 
-	### 翻訳された *.textile ファイルを生成
-	$ rake XXX.textile
-	[create] XXX.textile
-	$ lv -Iu XXX.textile              # UTF-8 であることを確認
+	### 翻訳された *.md ファイルを生成
+	$ rake XXX.md
+	[create] XXX.md
+	$ lv -Iu XXX.md              # UTF-8 であることを確認
 	$ rake clean                      # 誤ったコミットを防ぐため
 
-	### *.trans ファイルをコミット (*.textile はコミットしないこと!)
-	$ git add XXX.textile.trans
-	$ git commit -m "ja-JP: Finish translation of 'XXX.textile'."
+	### *.trans ファイルをコミット (*.md はコミットしないこと!)
+	$ git add XXX.md.trans
+	$ git commit -m "ja-JP: Finish translation of 'XXX.md'."
 	$ git pull --rebase
 	$ git push
 
@@ -191,24 +191,24 @@
 	### 英語の差分を確認
 	$ cd railties/guides/source/ja-JP/
 	$ rake diff                       # 全体
-	$ rake diff F=XXX.textile.trans   # 個別
+	$ rake diff F=XXX.md.trans   # 個別
 
 	### 英語の部分を更新
-	$ emacs XXX.textile.trans         # 手動で差分を適用
-	$ rake diff F=XXX.textile.trans   # 差分がないことを確認
+	$ emacs XXX.md.trans         # 手動で差分を適用
+	$ rake diff F=XXX.md.trans   # 差分がないことを確認
 
 	### 翻訳を更新
-	$ emacs XXX.textile.trans         # 手動で差分を翻訳
+	$ emacs XXX.md.trans         # 手動で差分を翻訳
 
-	### 翻訳された *.textile ファイルを生成
-	$ rake XXX.textile
-	[create] XXX.textile
-	$ lv -Iu XXX.textile              # UTF-8 であることを確認
+	### 翻訳された *.md ファイルを生成
+	$ rake XXX.md
+	[create] XXX.md
+	$ lv -Iu XXX.md              # UTF-8 であることを確認
 	$ rake clean                      # 誤ったコミットを防ぐため
 
-	### *.trans ファイルをコミット (*.textile はコミットしないこと!)
-	$ git add XXX.textile.trans
-	$ git commit -m "ja-JP: Update translation of 'XXX.textile'."
+	### *.trans ファイルをコミット (*.md はコミットしないこと!)
+	$ git add XXX.md.trans
+	$ git commit -m "ja-JP: Update translation of 'XXX.md'."
 	$ git pull --rebase
 	$ git push
 
@@ -224,17 +224,17 @@
 
 	### 翻訳を更新
 	$ cd railties/guides/source/ja-JP/
-	$ emacs XXX.textile.trans         # 手動で翻訳を修正
+	$ emacs XXX.md.trans         # 手動で翻訳を修正
 
-	### 翻訳された *.textile ファイルを生成
-	$ rake XXX.textile
-	[create] XXX.textile
-	$ lv -Iu XXX.textile              # UTF-8 であることを確認
+	### 翻訳された *.md ファイルを生成
+	$ rake XXX.md
+	[create] XXX.md
+	$ lv -Iu XXX.md              # UTF-8 であることを確認
 	$ rake clean                      # 誤ったコミットを防ぐため
 
-	### *.trans ファイルをコミット (*.textile はコミットしないこと!)
-	$ git add XXX.textile.trans
-	$ git commit -m "Fix translation of 'XXX.textile'."
+	### *.trans ファイルをコミット (*.md はコミットしないこと!)
+	$ git add XXX.md.trans
+	$ git commit -m "Fix translation of 'XXX.md'."
 	$ git pull --rebase
 	$ git push
 
@@ -286,18 +286,18 @@
 ##	$ git rebase master          # (TODO: 必要?)
 ##	$ git stash pop              # git stash した場合
 ##
-##	### 翻訳された *.textile を翻訳リポジトリからコピー
+##	### 翻訳された *.md を翻訳リポジトリからコピー
 ##	$ cd railties/guides/source/ja-JP/
 ##	$ d=../../../../docrails/railties/guides/source/ja-JP/
-##	$ (cd $d; rake ja; tar cf - **/*.textile) | tar xf -
+##	$ (cd $d; rake ja; tar cf - **/*.md) | tar xf -
 ##
-##	### 翻訳された *.textile を本家リポジトリに反映
+##	### 翻訳された *.md を本家リポジトリに反映
 ##	$ git branch                 # ja-JP ブランチであることを確認
 ##	* ja-JP
 ##          master
 ##	$ git status
-##	$ git add **/*.textile
-##	$ git ci -m "ja-JP: Translate 'XXX.textile'."
+##	$ git add **/*.md
+##	$ git ci -m "ja-JP: Translate 'XXX.md'."
 ##	$ git push
 
 
@@ -309,25 +309,25 @@ Rake タスク一覧
 	rake clean と同義。
 
 : rake clean
-	新規作成された *.textile を削除する。
-	また変更された *.textile は git checkout でもとに戻す。
-	これは、誤って *.textile をコミットしてしまうのを防ぐため。
+	新規作成された *.md を削除する。
+	また変更された *.md は git checkout でもとに戻す。
+	これは、誤って *.md をコミットしてしまうのを防ぐため。
 
 : rake status
-	git status の結果から *.textile を取り除いて出力する。
+	git status の結果から *.md を取り除いて出力する。
 
-: rake XXX.textile.trans
-	$SRC/ja-JP/*.textile.trans のスケルトンを、$SRC/XXX.textile から作成する。
+: rake XXX.md.trans
+	$SRC/ja-JP/*.md.trans のスケルトンを、$SRC/XXX.md から作成する。
 
 : rake trans
 	すべての *.trans のスケルトンを作成する。
 
-: rake XXX.textile
-	*.trans から日本語翻訳だけを取り出し、*.textile ファイルに保存する。
+: rake XXX.md
+	*.trans から日本語翻訳だけを取り出し、*.md ファイルに保存する。
 
 : rake ja
-	すべての *.trans から日本語翻訳だけを取り出し、*.textile ファイルに保存する。
+	すべての *.trans から日本語翻訳だけを取り出し、*.md ファイルに保存する。
 
-: rake diff F=XXX.textile.trans
-	*.trans と ../en/*.textile の英語部分における差分を表示する。
+: rake diff F=XXX.md.trans
+	*.trans と ../en/*.md の英語部分における差分を表示する。
 	F=... を指定しなかった場合はすべてのファイルが対象となる。
